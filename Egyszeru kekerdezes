@@ -1,0 +1,46 @@
+using System;
+using MySql.Data.MySqlClient;
+
+class Program
+{
+    static void Main()
+    {
+        // 1. Kapcsolati string (állítsd be a saját adataid szerint)
+        string connectionString = "server=localhost;user=root;password=yourpassword;database=testdb;";
+
+        // 2. SQL lekérdezés
+        string query = "SELECT id, name, email FROM users";
+
+        // 3. Kapcsolat és adatolvasás
+        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        {
+            MySqlCommand command = new MySqlCommand(query, connection);
+
+            try
+            {
+                connection.Open();
+                MySqlDataReader reader = command.ExecuteReader();
+
+                Console.WriteLine("Id\tName\t\tEmail");
+
+                while (reader.Read())
+                {
+                    int id = reader.GetInt32("id");
+                    string name = reader.GetString("name");
+                    string email = reader.GetString("email");
+
+                    Console.WriteLine($"{id}\t{name}\t\t{email}");
+                }
+
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hiba történt: " + ex.Message);
+            }
+        }
+
+        Console.WriteLine("\nLekérdezés kész. Nyomj egy gombot a kilépéshez...");
+        Console.ReadKey();
+    }
+}
